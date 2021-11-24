@@ -9,8 +9,9 @@ $pdo = new PDO('mysql:host=localhost;dbname=' . $database, $user, $password, [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 $stmt = $pdo->query('SELECT * FROM `posts`');
-
 $blogs = $stmt->fetchAll();
+$stmt = $pdo->query('SELECT * FROM `comments`');
+$comments = $stmt->fetchAll();
 
 
 date_default_timezone_set('Europe/Zurich');
@@ -37,7 +38,7 @@ if (isset($_POST['post-blog'])) {
         $stmt->execute([':username' => $username, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText]);
     }
 }
-/*
+
 if (isset($_POST['post-comment'])) {
     if (!empty($_POST['comment-username'])) {
         $commentUsername = $_POST['comment-username'];
@@ -51,10 +52,11 @@ if (isset($_POST['post-comment'])) {
     }
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `comments` (comment_text, created_by, created_at, post_id) VALUES (:commentText, :commentUsername, :postTime, :postID)");
-        $stmt->execute(['commentText' => $commentText, 'commentUsername' => $commentUsername, 'postTime' => $postDateTime, 'postID' => .....]);
+        $stmt->execute(['commentText' => $commentText, 'commentUsername' => $commentUsername, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
     }
 }
-*/
+
+
 
 ?>
 
@@ -99,8 +101,9 @@ if (isset($_POST['post-comment'])) {
 
             <div class="flex-container">
                 
-                <?php foreach($blogs as $blog) { ?>
-                    <div class="flex-element">
+                <?php 
+                foreach($blogs as $blog) { ?>
+                    <div class="flex-post">
                         <h2 class="post_title"><?=htmlspecialchars($blog['post_title'])?></h1>
                         <h2 class="created_by"><?=htmlspecialchars($blog['created_by'])?></h2>
                         <h2 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h3>
@@ -111,7 +114,22 @@ if (isset($_POST['post-comment'])) {
                                 <input type="text" class="comment-username" name="comment-username"></input>
                                 <textarea name="post-comment-text" id="post-comment-text" cols="30" rows="1" placeholder="Enter your text here"></textarea>
                                 <input type="submit" id="post-comment" value="submit" name="post-comment">
+
+                                <input type="hidden" name="commentID" value=<?=$blog['id']?> />
                             </form>
+                        </div>
+                        <div class="comments">
+                            <?php foreach ($comments as $comment) { ?>
+                                
+                                <?php if ($comment['post_id'] == $blog['id']) { ?>
+                                <div class="comment">
+                                    <p class="created_by"><?=htmlspecialchars($comment['created_by'])?></p>
+                                    <p class="created_at"><?=htmlspecialchars($comment['created_at'])?></p>
+                                    <p class="comment_text"><?=htmlspecialchars($comment['comment_text'])?></p>
+                                </div>
+                                <?php } ?>
+                            <?php } ?>
+                        
                         </div>
                     </div>
                 <?php } ?>    

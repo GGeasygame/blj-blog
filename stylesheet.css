@@ -36,18 +36,19 @@
     border: 1px solid black;
     margin: 10px;
 }
-.flex-element {
+.flex-post {
     display: grid;
     grid-template:
     "post_title     created_by      created_at"
     "post_text      post_text       post_text"
     "post-comment   post-comment    post-comment"
+    "comment        comment         comment"
     ;
     grid-template-rows: 60px auto auto;
     grid-template-columns: auto 200px 200px;
     text-align: center;
 }
-.flex-container > .flex-element:not(:first-child) {
+.flex-container > .flex-post:not(:first-child) {
     border-top: 1px solid black;
 }
 h2 {
@@ -80,4 +81,32 @@ h2 {
 }
 .error-box {
     background-color: red;
+}
+.comments {
+    grid-area: comment;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.comment {
+    display: grid;
+    grid-template:
+    "created_by     created_at"
+    "comment_text   comment_text"
+    ;
+    grid-template-rows: auto auto;
+    grid-template-columns: auto auto;
+}
+.comment > .created_by {
+    grid-area: created_by;
+    text-align: right;
+    margin-right: 20px;
+}
+.comment > .created_at {
+    grid-area: created_at;
+    text-align: left;
+    margin-left: 20px;
+}
+.comment > .comment_text {
+    grid-area: comment_text;
 }
