@@ -55,7 +55,7 @@ if (isset($_POST['post-comment'])) {
     }
 }
 */
-echo 'commit';
+
 ?>
 
 <!DOCTYPE html>
