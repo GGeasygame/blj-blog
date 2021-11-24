@@ -13,7 +13,7 @@ $blogs = $stmt->fetchAll();
 $stmt = $pdo->query('SELECT * FROM `comments`');
 $comments = $stmt->fetchAll();
 
-
+$imagesArray = array();
 date_default_timezone_set('Europe/Zurich');
 $postDateTime = date("d.m.Y H:i:s", time());
 $errors = array();
@@ -36,6 +36,15 @@ if (isset($_POST['post-blog'])) {
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `posts` (created_by, created_at, post_title, post_text) VALUES (:username, :postTime, :postTitle, :postText)");
         $stmt->execute([':username' => $username, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText]);
+        
+        if (!empty($imagesArray)) {
+            $stmt = $pdo->prepare("INSERT INTO `posts` (img_url) VALUES (:img)");
+            foreach($imagesArray as $img) {
+                $imagesString += $img + ';;;;';
+            }
+            $stmt->execute([':img' => $imagesString]);
+        }
+
     }
 }
 
@@ -54,6 +63,16 @@ if (isset($_POST['post-comment'])) {
         $stmt = $pdo->prepare("INSERT INTO `comments` (comment_text, created_by, created_at, post_id) VALUES (:commentText, :commentUsername, :postTime, :postID)");
         $stmt->execute(['commentText' => $commentText, 'commentUsername' => $commentUsername, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
     }
+}
+
+if (isset($_POST['submit-img'])) {
+    
+    if (!is_array(getimagesize($_POST['img']))) {
+        $errors[] = 'Please enter valid Image-URL';
+    } else {
+        $imagesArray[] = $_POST['img'];
+    }
+    var_dump($imagesArray);
 }
 
 
@@ -94,6 +113,11 @@ if (isset($_POST['post-comment'])) {
                 <textarea name="post-text" class="post-text" cols="100" rows="13" placeholder="Enter your text here"></textarea>
                 <input type="submit" id="post-blog" value="submit" name="post-blog">
             </form>
+            <form action="" method="post">
+                <label for="img">Insert Image-URL: </label>
+                <input type="text" class="img" name="img"></input>
+                <input type="submit" id="submit-img" value="submit" name="submit-img">
+            </form>
 
         </section>
 
@@ -108,6 +132,14 @@ if (isset($_POST['post-comment'])) {
                         <h2 class="created_by"><?=htmlspecialchars($blog['created_by'])?></h2>
                         <h2 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h3>
                         <p class="post_text"><?=htmlspecialchars($blog['post_text'])?></p>
+
+                        <?php if ($blog['img_url'] != null) { 
+                            $images = explode(';;;;', $imagesString);
+                            foreach ($images as $image) { ?>
+                                <img src=<?=$image?> alt="image">
+                                <?php }
+                            } ?>
+
                         <div class="post-comment">
                             <form action="./blog.php" method="post" class="post-comment-form">
                                 <label for="comment-username">Name: </label>
@@ -129,7 +161,6 @@ if (isset($_POST['post-comment'])) {
                                 </div>
                                 <?php } ?>
                             <?php } ?>
-                        
                         </div>
                     </div>
                 <?php } ?>    

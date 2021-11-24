@@ -110,3 +110,6 @@ h2 {
 .comment > .comment_text {
     grid-area: comment_text;
 }
+.flex-post img {
+    max-width: 400;
+}
