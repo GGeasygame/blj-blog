@@ -1,0 +1,83 @@
+.body {
+    padding: 0px;
+    margin: 0px;
+}
+.grid {
+    display: grid;
+    grid-template:
+    "header"
+    "body-blogger"
+    "body-user"
+    ;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 1fr;
+
+    border: 1px solid black;
+}
+
+.header {
+    grid-area: header;
+    text-align: center;
+}
+.body-blogger {
+    grid-area: body-blogger;
+    border: 1px solid black;
+    margin: 10px;
+}
+.body-user {
+    grid-area: body-user;
+}
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    justify-content: center;
+    border: 1px solid black;
+    margin: 10px;
+}
+.flex-element {
+    display: grid;
+    grid-template:
+    "post_title     created_by      created_at"
+    "post_text      post_text       post_text"
+    "post-comment   post-comment    post-comment"
+    ;
+    grid-template-rows: 60px auto auto;
+    grid-template-columns: auto 200px 200px;
+    text-align: center;
+}
+.flex-container > .flex-element:not(:first-child) {
+    border-top: 1px solid black;
+}
+h2 {
+    margin: 10px 10px;
+}
+.post_title {
+    grid-area: post_title;
+}
+.created_by {
+    grid-area: created_by;
+}
+.created_at {
+    grid-area: created_at;
+}
+.post-text {
+    grid-area: post_text;
+    border-top: 1px solid black;
+    margin: 5px 0px;
+    padding: 10px 10px;
+    text-align: left;
+    display: block;
+    margin-top: 10px;
+}
+.post-comment {
+    grid-area: post-comment;
+    background-color: lightgrey;
+}
+.post-form {
+    padding: 20px;
+}
+.error-box {
+    background-color: red;
+}
