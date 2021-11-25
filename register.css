@@ -6,3 +6,11 @@ form, fieldset {
 fieldset {
     text-align: center;
 }
+form {
+    margin: 0px;
+    display: inline;
+}
+label, input {
+    margin-bottom: 10px;
+}
+

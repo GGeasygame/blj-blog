@@ -1,5 +1,8 @@
 <?php
 
+if (isset($_POST['submit'])) {
+    
+}
 
 ?>
 
@@ -16,11 +19,23 @@
     <fieldset class="register-fieldset">
         <legend>Register</legend>
         <form action="" method="post">
-            <label for="first-name">First Name </label>
-            <input type="text" name="first-name" class="firstname" placeholder="First Name">
-
-
-
+            <div>
+                <label for="first-name">First Name </label>
+                <input type="name" name="first-name" class="first-name" placeholder="First Name">
+            </div>
+            <div>
+                <label for="last-name">Last Name </label>
+                <input type="name" name="last-name" class="last-name" placeholder="Last Name">
+            </div>
+            <div>
+                <label for="email">Email </label>
+                <input type="email" name="email" class="email" placeholder="Email">
+            </div>
+            <div>
+                <label for="username">Username </label>
+                <input type="text" name="username" class="username" placeholder="Username">
+            </div>
+            <input type="submit" value="submit" name="submit" class="submit">
         </form>
 
 

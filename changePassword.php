@@ -14,12 +14,11 @@ $pdo = new PDO('mysql:host=localhost;dbname=' . $database, $user, $password, [
 $stmt = $pdo->query("SELECT * FROM `users` WHERE id=$id");
 $userData = $stmt->fetchAll();
  
-
+$logged = 0;
 if (isset($_POST['new-password-submit'])) {
     $newPassword = $_POST['new-password'];
     $oldPassword = $_POST['old-password'];
     $userID = $_POST['userID'];
-    var_dump($userID);
 
     $stmt = $pdo->prepare("SELECT * FROM `users` WHERE user_password = SHA1(:oldPassword) and id = :id");
     $stmt->execute([':oldPassword' => $oldPassword, ':id' => $userID]);
@@ -28,9 +27,9 @@ if (isset($_POST['new-password-submit'])) {
     if (count($userValidation) > 0) {
         $stmt = $pdo->prepare("UPDATE `users` SET user_password = SHA1(:newPassword) WHERE id = :id");
         $stmt->execute([':newPassword' => $newPassword, 'id' => $userID]);
-        echo 'SUCCESS!';
+        $logged = 2;
     } else {
-        echo 'wrong password';
+        $logged = 1;
     }
 }
 
@@ -46,6 +45,12 @@ if (isset($_POST['new-password-submit'])) {
     <link rel="stylesheet" href="changePassword.css">
 </head>
 <body>
+
+    <?php if ($logged === 2) { ?>
+        <h1 class="success">SUCCESS!</h1>
+    <?php } else if ($logged === 1) { ?>
+        <h1 class="error">WRONG PASSWORD</h1>
+    <?php } ?>
     <fieldset>
         <legend>Change Password</legend>
         <form action="" method="post">
