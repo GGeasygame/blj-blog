@@ -20,10 +20,7 @@ $pdo2 = new PDO('mysql:host=mysql2.webland.ch;dbname=d041e_dagomez', 'd041e_dago
 ]);
 $stmt = $pdo2->query('SELECT `url`, `description` FROM `urls`');
 $urls = $stmt->fetchAll();
-foreach($urls as $url) {
-    echo 'url: ' . $url['url'];
-    echo 'description: ' . $url['description'];
-}
+array_multisort(array_column($urls, 'description'), SORT_ASC, $urls);
 
 session_start();
 $imagesString = '';
@@ -92,6 +89,25 @@ if (isset($_POST['post-comment'])) {
     }
 }
 
+if (isset($_POST['rep'])) {
+    $rep = $_POST['rep'];
+    echo $rep;
+    $repID = $_POST['repID'];
+    if ($rep === 'like') {
+        $postLike = $_POST['repPostLike'] + 1;
+        $pdo->exec("UPDATE `posts` SET like_post = $postLike WHERE id = $repID");
+        echo $postLike;
+    } elseif ($rep === 'dislike') {
+        $postDislike = $_POST['repPostDislike'] + 1;
+        $pdo->exec("UPDATE `posts` SET dislike_post = $postDislike WHERE id = $repID");
+        echo $postDislike;
+    }
+    
+    echo $repID;
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -106,7 +122,20 @@ if (isset($_POST['post-comment'])) {
 <body>
     <div class="grid">
         <section class="header element">
-            <h1>Blog</h1>
+            <h1>Jonas' Blog</h1>
+        </section>
+
+        <section class="navigation">
+            <ul>
+
+                <?php foreach ($urls as $url) { ?>
+
+                    <li><a href=<?=$url['url']?>><?=$url['description']?></a></li>
+
+                <?php } ?>
+
+
+            </ul>
         </section>
 
         <section class="body-blogger element">
@@ -163,7 +192,7 @@ if (isset($_POST['post-comment'])) {
                         </div>
 
                         <div class="post-comment">
-                            <form action="./blog.php" method="post" class="post-comment-form">
+                            <form action="./blog.php" method="post" class="post-comment-form" class="comment-form">
                                 <label for="comment-username">Name: </label>
                                 <input type="text" class="comment-username" name="comment-username"></input>
                                 <textarea name="post-comment-text" id="post-comment-text" cols="30" rows="1" placeholder="Enter your text here"></textarea>
@@ -171,6 +200,19 @@ if (isset($_POST['post-comment'])) {
 
                                 <input type="hidden" name="commentID" value=<?=$blog['id']?> />
                             </form>
+
+                            <form action="" method="post" class="rep-form">         
+                                <input type="radio" id="like" name="rep" value="like">
+                                <label for="like">Like </label>
+                                <input type="radio" id="dislike" name="rep" value="dislike">
+                                <label for="dislike">Dislike </label>
+                                <input type="submit" value="submit" name="submit-rep" id="submit-rep">
+                            
+                                <input type="hidden" name="repID" value=<?=$blog['id']?>>
+                                <input type="hidden" name="repPostLike" value=<?=$blog['like_post']?>>
+                                <input type="hidden" name="repPostDislike" value=<?=$blog['dislike_post']?>>
+                            </form>
+                            <p>Likes: <?=$blog['like_post'] === null ? 0 : $blog['like_post']?> Dislikes: <?=$blog['dislike_post'] === null ? 0 : $blog['dislike_post']?></p>
                         </div>
                         <div class="comments">
                             <?php foreach ($comments as $comment) { ?>
