@@ -13,10 +13,40 @@ $blogs = $stmt->fetchAll();
 $stmt = $pdo->query('SELECT * FROM `comments`');
 $comments = $stmt->fetchAll();
 
+
+$pdo2 = new PDO('mysql:host=mysql2.webland.ch;dbname=d041e_dagomez', 'd041e_dagomez', '54321_Db!!!', [
+    PDO::ATTR_ERRMODE               => PDO::ERRMODE_EXCEPTION,
+    PDO::MYSQL_ATTR_INIT_COMMAND    => 'SET NAMES utf8',
+]);
+$stmt = $pdo2->query('SELECT `url`, `description` FROM `urls`');
+$urls = $stmt->fetchAll();
+foreach($urls as $url) {
+    echo 'url: ' . $url['url'];
+    echo 'description: ' . $url['description'];
+}
+
+session_start();
+$imagesString = '';
 $imagesArray = array();
 date_default_timezone_set('Europe/Zurich');
 $postDateTime = date("d.m.Y H:i:s", time());
 $errors = array();
+
+$imagesArray = $_SESSION;
+if (isset($_POST['submit-img'])) {
+    if (empty($_POST['img'])) {
+        $errors[] = 'Please enter Image-URL';
+    } else if (@!is_array(getimagesize($_POST['img']))) {
+        $errors[] = 'Please enter valid Image-URL';
+    } else {
+        $_SESSION['img'][] = $_POST['img'];
+        $imagesArray = $_SESSION;
+        if (sizeof($imagesArray)>1) {
+            array_pop($imagesArray);
+        }
+    }
+}
+
 if (isset($_POST['post-blog'])) {
     if (!empty($_POST['username'])) {
         $username = $_POST['username'];
@@ -34,17 +64,14 @@ if (isset($_POST['post-blog'])) {
         $errors[] = 'Please enter a title';
     }
     if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO `posts` (created_by, created_at, post_title, post_text) VALUES (:username, :postTime, :postTitle, :postText)");
-        $stmt->execute([':username' => $username, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText]);
+        $stmt = $pdo->prepare("INSERT INTO `posts` (created_by, created_at, post_title, post_text, img_url) VALUES (:username, :postTime, :postTitle, :postText, :img)");
         
-        if (!empty($imagesArray)) {
-            $stmt = $pdo->prepare("INSERT INTO `posts` (img_url) VALUES (:img)");
-            foreach($imagesArray as $img) {
-                $imagesString += $img + ';;;;';
-            }
-            $stmt->execute([':img' => $imagesString]);
+        foreach($imagesArray['img'] as $img) {
+            $imagesString = $imagesString . $img . ';;;;';
         }
-
+        
+        unset($_SESSION['img']);
+        $stmt->execute([':username' => $username, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText, 'img' => $imagesString]);
     }
 }
 
@@ -64,18 +91,6 @@ if (isset($_POST['post-comment'])) {
         $stmt->execute(['commentText' => $commentText, 'commentUsername' => $commentUsername, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
     }
 }
-
-if (isset($_POST['submit-img'])) {
-    
-    if (!is_array(getimagesize($_POST['img']))) {
-        $errors[] = 'Please enter valid Image-URL';
-    } else {
-        $imagesArray[] = $_POST['img'];
-    }
-    var_dump($imagesArray);
-}
-
-
 
 ?>
 
@@ -112,6 +127,9 @@ if (isset($_POST['submit-img'])) {
                 <input type="text" class="post-title" name="post-title"></input>
                 <textarea name="post-text" class="post-text" cols="100" rows="13" placeholder="Enter your text here"></textarea>
                 <input type="submit" id="post-blog" value="submit" name="post-blog">
+
+                
+
             </form>
             <form action="" method="post">
                 <label for="img">Insert Image-URL: </label>
@@ -133,12 +151,16 @@ if (isset($_POST['submit-img'])) {
                         <h2 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h3>
                         <p class="post_text"><?=htmlspecialchars($blog['post_text'])?></p>
 
-                        <?php if ($blog['img_url'] != null) { 
-                            $images = explode(';;;;', $imagesString);
-                            foreach ($images as $image) { ?>
-                                <img src=<?=$image?> alt="image">
-                                <?php }
-                            } ?>
+                        <div class="img-flex">
+                            <?php if ($blog['img_url'] != null) { 
+                                $images = explode(';;;;', $blog['img_url']);
+                                array_pop($images);
+                                foreach ($images as $image) { ?>
+                                    <img src="<?=htmlspecialchars($image)?>" alt="image">
+                                    
+                                    <?php }
+                                } ?>
+                        </div>
 
                         <div class="post-comment">
                             <form action="./blog.php" method="post" class="post-comment-form">

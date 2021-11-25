@@ -41,10 +41,11 @@
     grid-template:
     "post_title     created_by      created_at"
     "post_text      post_text       post_text"
+    "img            img             img"
     "post-comment   post-comment    post-comment"
     "comment        comment         comment"
     ;
-    grid-template-rows: 60px auto auto;
+    grid-template-rows: 60px auto auto auto;
     grid-template-columns: auto 200px 200px;
     text-align: center;
 }
@@ -110,6 +111,15 @@ h2 {
 .comment > .comment_text {
     grid-area: comment_text;
 }
-.flex-post img {
-    max-width: 400;
+.img-flex > img {
+    max-width: 200px;
+    max-height: 200px;
+}
+.img-flex {
+    grid-area: img;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 10px;
 }
