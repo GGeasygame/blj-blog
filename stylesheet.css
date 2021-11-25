@@ -11,7 +11,7 @@
     "other-blogs    other-blogs"
     ;
     grid-template-rows: auto;
-    grid-template-columns: auto;
+    grid-template-columns: 200px auto;
 
     border: 1px solid black;
 }
@@ -36,9 +36,12 @@
 .navigation {
     grid-area: navigation;
 }
+.navigation > ul {
+    border-right: 1px solid black;
+    max-width: 200px
+}
 .body-blogger {
     grid-area: body-blogger;
-    border: 1px solid black;
     margin: 10px;
 }
 .body-user {
@@ -147,4 +150,8 @@ h2 {
 
 .other-blogs {
     grid-area: other-blogs;
+}
+
+.create-account-message {
+    color: red;
 }

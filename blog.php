@@ -30,54 +30,33 @@ $postDateTime = date("d.m.Y H:i:s", time());
 $errors = array();
 
 $imagesArray = $_SESSION;
-if (isset($_POST['submit-img'])) {
-    if (empty($_POST['img'])) {
-        $errors[] = 'Please enter Image-URL';
-    } else if (@!is_array(getimagesize($_POST['img']))) {
-        $errors[] = 'Please enter valid Image-URL';
+
+$loggedInUsername = '';
+if (isset($_POST['login'])) {
+    $inputUsernameEmail = $_POST['usernameEmail'];
+    $inputPassword = $_POST['password'];
+    $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (username = :username or email = :email) and (user_password = SHA1(:user_password))");
+    $stmt->execute([':username' => $inputUsernameEmail, ':email' => $inputUsernameEmail, ':user_password' => $inputPassword]);
+    $userValidation = $stmt->fetchAll();
+
+
+    if (count($userValidation) > 0) {
+        $userValidation = $userValidation[0];
+        $loggedInUsername = $userValidation['username'];
+
+        $_SESSION['userdata'][] = $userValidation;
     } else {
-        $_SESSION['img'][] = $_POST['img'];
-        $imagesArray = $_SESSION;
-        if (sizeof($imagesArray)>1) {
-            array_pop($imagesArray);
-        }
+        $errors[] = 'Wrong Password or Username';
     }
+    
+}
+if (!empty($_SESSION['userdata'])) {
+    $loggedInUsername = $_SESSION['userdata'][0]['username'];
+    $userValidation = $_SESSION['userdata'][0];
 }
 
-if (isset($_POST['post-blog'])) {
-    if (!empty($_POST['username'])) {
-        $username = $_POST['username'];
-    } else {
-        $errors[] = 'Please enter a username';
-    }
-    if (!empty($_POST['post-text'])) {
-        $postText = $_POST['post-text'];
-    } else {
-        $errors[] = 'Please enter a text';
-    }
-    if (!empty($_POST['post-title'])) {
-        $postTitle = $_POST['post-title'];
-    } else {
-        $errors[] = 'Please enter a title';
-    }
-    if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO `posts` (created_by, created_at, post_title, post_text, img_url) VALUES (:username, :postTime, :postTitle, :postText, :img)");
-        
-        foreach($imagesArray['img'] as $img) {
-            $imagesString = $imagesString . $img . ';;;;';
-        }
-        
-        unset($_SESSION['img']);
-        $stmt->execute([':username' => $username, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText, 'img' => $imagesString]);
-    }
-}
 
 if (isset($_POST['post-comment'])) {
-    if (!empty($_POST['comment-username'])) {
-        $commentUsername = $_POST['comment-username'];
-    } else {
-        $errors[] = 'Please enter a username';
-    }
     if (!empty($_POST['post-comment-text'])) {
         $commentText = $_POST['post-comment-text'];
     } else {
@@ -85,7 +64,7 @@ if (isset($_POST['post-comment'])) {
     }
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `comments` (comment_text, created_by, created_at, post_id) VALUES (:commentText, :commentUsername, :postTime, :postID)");
-        $stmt->execute(['commentText' => $commentText, 'commentUsername' => $commentUsername, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
+        $stmt->execute(['commentText' => $commentText, 'commentUsername' => $loggedInUsername, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
     }
 }
 
@@ -107,24 +86,35 @@ if (isset($_POST['rep'])) {
     
 }
 
-$loggedInUsername = '';
-if (isset($_POST['login'])) {
-    $inputUsernameEmail = $_POST['usernameEmail'];
-    $inputPassword = $_POST['password'];
-    $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (username = :username or email = :email) and (user_password = SHA1(:user_password))");
-    $stmt->execute([':username' => $inputUsernameEmail, ':email' => $inputUsernameEmail, ':user_password' => $inputPassword]);
-    $userValidation = $stmt->fetchAll();
 
-
-    if (count($userValidation) > 0) {
-        $userValidation = $userValidation[0];
-        $loggedInUsername = $userValidation['username'];
+if (isset($_POST['post-blog'])) {
+    if (!empty($_POST['post-text'])) {
+        $postText = $_POST['post-text'];
     } else {
-        $errors[] = 'Wrong Password or Username';
+        $errors[] = 'Please enter a text';
     }
-    
+    if (!empty($_POST['post-title'])) {
+        $postTitle = $_POST['post-title'];
+    } else {
+        $errors[] = 'Please enter a title';
+    }
+
+    if (@!is_array(getimagesize($_POST['img']))) {
+        $errors[] = 'Please enter valid Image-URL';
+    } 
+    if (empty($errors)) {
+        $stmt = $pdo->prepare("INSERT INTO `posts` (created_by, created_at, post_title, post_text, img_url) VALUES (:username, :postTime, :postTitle, :postText, :img)");
+        
+        $imagesString = $_POST['img'];
+        
+        unset($_SESSION['img']);
+        $stmt->execute([':username' => $loggedInUsername, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText, 'img' => $imagesString]);
+    }
 }
 
+if (isset($_SESSION['userdata']) && isset($_POST['logout'])) {
+    session_destroy();
+}
 ?>
 
 <!DOCTYPE html>
@@ -163,6 +153,9 @@ if (isset($_POST['login'])) {
 
                     <input type="hidden" name="userID" value=<?=$userValidation['id']?>>
                 </form>
+                <form action="" method="post">
+                    <input type="submit" value="logout" name="logout" class="logout">
+                </form>
                 </fieldset>
             <?php } ?>
         </section>
@@ -191,23 +184,18 @@ if (isset($_POST['login'])) {
                 </div>
             <?php } ?>
            
-            <form action="./blog.php" method="post" class="post-form">
-                <label for="username">Name: </label>
-                <input type="text" class="username" name="username"></input>
+            <?php if ($loggedInUsername === '') { ?>
+                <h2 class="create-account-message">Create Account To Post</h2>
+            <?php } else {?>
+            <form action="" method="post" class="post-form">
                 <label for="title">Title: </label>
                 <input type="text" class="post-title" name="post-title"></input>
                 <textarea name="post-text" class="post-text" cols="100" rows="13" placeholder="Enter your text here"></textarea>
-                <input type="submit" id="post-blog" value="submit" name="post-blog">
-
-                
-
-            </form>
-            <form action="" method="post">
                 <label for="img">Insert Image-URL: </label>
-                <input type="text" class="img" name="img"></input>
-                <input type="submit" id="submit-img" value="submit" name="submit-img">
+                <input type="text" class="img" name="img"></input><br>
+                <input type="submit" id="post-blog" value="submit" name="post-blog">
             </form>
-
+            <?php } ?>
         </section>
 
         <section class="body-user element">
@@ -224,19 +212,21 @@ if (isset($_POST['login'])) {
 
                         <div class="img-flex">
                             <?php if ($blog['img_url'] != null) { 
+                                $images = $blog['img_url'];
+                                /*
                                 $images = explode(';;;;', $blog['img_url']);
                                 array_pop($images);
-                                foreach ($images as $image) { ?>
-                                    <img src="<?=htmlspecialchars($image)?>" alt="image">
+                                */
+
+                                // foreach ($images as $image) { ?>
+                                    <img src="<?=htmlspecialchars($images)?>" alt="image">
                                     
-                                    <?php }
+                                    <?php // }
                                 } ?>
                         </div>
 
                         <div class="post-comment">
-                            <form action="./blog.php" method="post" class="post-comment-form" class="comment-form">
-                                <label for="comment-username">Name: </label>
-                                <input type="text" class="comment-username" name="comment-username"></input>
+                            <form action="" method="post" class="post-comment-form" class="comment-form">
                                 <textarea name="post-comment-text" id="post-comment-text" cols="30" rows="1" placeholder="Enter your text here"></textarea>
                                 <input type="submit" id="post-comment" value="submit" name="post-comment">
 
