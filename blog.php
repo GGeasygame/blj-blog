@@ -99,7 +99,7 @@ if (isset($_POST['post-blog'])) {
         $errors[] = 'Please enter a title';
     }
 
-    if (@!is_array(getimagesize($_POST['img']))) {
+    if (!empty($_POST['img']) && @!is_array(getimagesize($_POST['img']))) {
         $errors[] = 'Please enter valid Image-URL';
     } 
     if (empty($errors)) {
@@ -109,6 +109,7 @@ if (isset($_POST['post-blog'])) {
         
         unset($_SESSION['img']);
         $stmt->execute([':username' => $loggedInUsername, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText, 'img' => $imagesString]);
+
     }
 }
 
