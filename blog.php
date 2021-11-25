@@ -91,22 +91,39 @@ if (isset($_POST['post-comment'])) {
 
 if (isset($_POST['rep'])) {
     $rep = $_POST['rep'];
-    echo $rep;
     $repID = $_POST['repID'];
+
+    if ($_POST['repPostLike'] === '') {$_POST['repPostLike'] = 0;}
+    if ($_POST['repPostDislike'] === '') {$_POST['repPostDislike'] = 0;}
     if ($rep === 'like') {
+        
         $postLike = $_POST['repPostLike'] + 1;
+
         $pdo->exec("UPDATE `posts` SET like_post = $postLike WHERE id = $repID");
-        echo $postLike;
     } elseif ($rep === 'dislike') {
         $postDislike = $_POST['repPostDislike'] + 1;
         $pdo->exec("UPDATE `posts` SET dislike_post = $postDislike WHERE id = $repID");
-        echo $postDislike;
     }
     
-    echo $repID;
 }
 
+$loggedInUsername = '';
+if (isset($_POST['login'])) {
+    $inputUsernameEmail = $_POST['usernameEmail'];
+    $inputPassword = $_POST['password'];
+    $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (username = :username or email = :email) and (user_password = SHA1(:user_password))");
+    $stmt->execute([':username' => $inputUsernameEmail, ':email' => $inputUsernameEmail, ':user_password' => $inputPassword]);
+    $userValidation = $stmt->fetchAll();
 
+
+    if (count($userValidation) > 0) {
+        $userValidation = $userValidation[0];
+        $loggedInUsername = $userValidation['username'];
+    } else {
+        $errors[] = 'Wrong Password or Username';
+    }
+    
+}
 
 ?>
 
@@ -123,6 +140,29 @@ if (isset($_POST['rep'])) {
     <div class="grid">
         <section class="header element">
             <h1>Jonas' Blog</h1>
+
+            <?php if ($loggedInUsername === '') { ?>
+                <form action="" method="post" class="loginForm">
+                    <fieldset class="loginFieldset">
+                    <legend>Login</legend>
+                    <label for="usernameEmail">Enter Username or Email</label>
+                    <input type="text" name="usernameEmail" class="usernameEmail" placeholder="username/email">
+                    <label for="password">Enter Password</label>
+                    <input type="password" name="password" class="password">
+                    <input type="submit" value="Login" name="login" class="login">
+                    </fieldset>
+                </form>
+            <?php } else { ?>
+                <fieldset class="loggedInUser">
+                    <legend>User</legend>
+                <h2 class="loggedin-text">You are Logged in as <?=$loggedInUsername?></h2>
+                <form action="./changePassword.php" method="post">
+                    <input type="submit" value="Change Password" id="change-password" name="change-password">
+
+                    <input type="hidden" name="userID" value=<?=$userValidation['id']?>>
+                </form>
+                </fieldset>
+            <?php } ?>
         </section>
 
         <section class="navigation">
@@ -229,6 +269,10 @@ if (isset($_POST['rep'])) {
                     </div>
                 <?php } ?>    
             </div>
+        </section>
+
+        <section class="other-blogs">
+            
         </section>
 
     </div>
