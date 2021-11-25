@@ -150,6 +150,8 @@ if (isset($_POST['login'])) {
                     <label for="password">Enter Password</label>
                     <input type="password" name="password" class="password">
                     <input type="submit" value="Login" name="login" class="login">
+
+                    <a href="./register.php">No Account Yet? Register Here</a>
                     </fieldset>
                 </form>
             <?php } else { ?>
