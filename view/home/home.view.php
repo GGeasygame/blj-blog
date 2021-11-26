@@ -14,7 +14,7 @@
         <section class="header element">
             <h1>Jonas' Blog</h1>
 
-            <?php if ($loggedInUsername === '') { ?>
+            <?php if ($loggedInID === '') { ?>
                 <form action="" method="post" class="loginForm">
                     <fieldset class="loginFieldset">
                     <legend>Login</legend>
@@ -30,7 +30,7 @@
             <?php } else { ?>
                 <fieldset class="loggedInUser">
                     <legend>User</legend>
-                <h2 class="loggedin-text">You are Logged in as <?=$loggedInUsername?></h2>
+                <h2 class="loggedin-text">You are Logged in as <?=$userValidation['username']?></h2>
                 <form action="index.php?page=changePassword" method="post">
                     <input type="submit" value="Change Password" id="change-password" name="change-password">
 
@@ -67,7 +67,7 @@
                 </div>
             <?php } ?>
            
-            <?php if ($loggedInUsername === '') { ?>
+            <?php if ($loggedInID === '') { ?>
                 <h2 class="create-account-message">Create Account To Post</h2>
             <?php } else {?>
             <form action="" method="post" class="post-form">
@@ -86,10 +86,17 @@
             <div class="flex-container">
                 
                 <?php 
-                foreach($blogs as $blog) { ?>
+                foreach($blogs as $blog) { 
+                    $stmt = $pdo->prepare("SELECT `username` FROM `users` WHERE id = :id");
+                        $stmt->execute(['id' => $blog['created_by']]);
+                        $username = $stmt->fetchAll();
+                        $username =$username[0]['username'];
+                    ?>
                     <div class="flex-post">
                         <h2 class="post_title"><?=htmlspecialchars($blog['post_title'])?></h1>
-                        <h2 class="created_by"><?=htmlspecialchars($blog['created_by'])?></h2>
+                        <h2 class="created_by"><?php 
+                        echo htmlspecialchars($username);
+                        ?></h2>
                         <h2 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h3>
                         <p class="post_text"><?=htmlspecialchars($blog['post_text'])?></p>
 
@@ -104,7 +111,7 @@
                         </div>
 
                         <div class="post-comment">
-                            <?php if ($loggedInUsername !== '') { ?>
+                            <?php if ($loggedInID !== '') { ?>
                             <form action="" method="post" class="post-comment-form" class="comment-form">
                                 <textarea name="post-comment-text" id="post-comment-text" cols="30" rows="1" placeholder="Enter your text here"></textarea>
                                 <input type="submit" id="post-comment" value="submit" name="post-comment">
@@ -130,11 +137,16 @@
                             <p>Likes: <?=$blog['like_post'] === null ? 0 : $blog['like_post']?> Dislikes: <?=$blog['dislike_post'] === null ? 0 : $blog['dislike_post']?></p>
                         </div>
                         <div class="comments">
-                            <?php foreach ($comments as $comment) { ?>
+                            <?php foreach ($comments as $comment) { 
+                                $stmt = $pdo->prepare("SELECT `username` FROM `users` WHERE id = :id");
+                                $stmt->execute(['id' => $comment['created_by']]);
+                                $username = $stmt->fetchAll();
+                                $username = $username[0]['username'];
+                                ?>
                                 
                                 <?php if ($comment['post_id'] == $blog['id']) { ?>
                                 <div class="comment">
-                                    <p class="created_by"><?=htmlspecialchars($comment['created_by'])?></p>
+                                    <p class="created_by"><?=htmlspecialchars($username)?></p>
                                     <p class="created_at"><?=htmlspecialchars($comment['created_at'])?></p>
                                     <p class="comment_text"><?=htmlspecialchars($comment['comment_text'])?></p>
                                 </div>

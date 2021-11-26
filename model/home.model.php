@@ -31,7 +31,7 @@ $errors = array();
 
 $imagesArray = $_SESSION;
 
-$loggedInUsername = '';
+$loggedInID = '';
 if (isset($_POST['login'])) {
     $inputUsernameEmail = $_POST['usernameEmail'];
     $inputPassword = $_POST['password'];
@@ -42,7 +42,7 @@ if (isset($_POST['login'])) {
 
     if (count($userValidation) > 0) {
         $userValidation = $userValidation[0];
-        $loggedInUsername = $userValidation['username'];
+        $loggedInID = $userValidation['id'];
 
         $_SESSION['userdata'][] = $userValidation;
     } else {
@@ -51,7 +51,7 @@ if (isset($_POST['login'])) {
     
 }
 if (!empty($_SESSION['userdata'])) {
-    $loggedInUsername = $_SESSION['userdata'][0]['username'];
+    $loggedInID = $_SESSION['userdata'][0]['id'];
     $userValidation = $_SESSION['userdata'][0];
 }
 
@@ -64,9 +64,33 @@ if (isset($_POST['post-comment'])) {
     }
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `comments` (comment_text, created_by, created_at, post_id) VALUES (:commentText, :commentUsername, :postTime, :postID)");
-        $stmt->execute(['commentText' => $commentText, 'commentUsername' => $loggedInUsername, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
+        $stmt->execute(['commentText' => $commentText, 'commentUsername' => $loggedInID, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
 
-        $stmt = $pdo->prepare("SELECT `created_by` FROM `users`WHERE (id = :id)");
+
+        $stmt = $pdo->prepare("SELECT `post_id` FROM `comments` WHERE (comment_id = :id)");
+        $stmt->execute(['id' => $pdo->lastInsertId()]);
+        $post_id = $stmt->fetchAll()[0]['post_id'];
+
+        $stmt = $pdo->prepare("SELECT `created_by` FROM `posts` WHERE (id = :id)");
+        $stmt->execute(['id' => $post_id]);
+        $postCreator = $stmt->fetchAll()[0]['created_by'];
+
+        $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (id = :id)");
+        $stmt->execute(['id' => $postCreator]);
+        $postCreatorData = $stmt->fetchAll()[0];
+
+
+        $to = $postCreatorData['email'];
+        echo $to;
+        $subject = "Jonas Blog";
+        echo $subject;
+        $message = strtr("Hallo @creator \r\n \r\n
+        Ihr Blog wurde von @commenter kommentiert!
+        ", ["@creator" => $postCreatorData['username'], "@commenter" => $userValidation['username']]);
+        echo $message;
+        if(mail($to, $subject, $message)) {
+            echo 'ERFOLGREICH GESENDET!';
+        }
     }
 }
 
@@ -87,7 +111,6 @@ if (isset($_POST['rep'])) {
     }
     
 }
-
 
 if (isset($_POST['post-blog'])) {
     if (!empty($_POST['post-text'])) {
@@ -110,7 +133,7 @@ if (isset($_POST['post-blog'])) {
         $imagesString = $_POST['img'];
         
         unset($_SESSION['img']);
-        $stmt->execute([':username' => $loggedInUsername, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText, 'img' => $imagesString]);
+        $stmt->execute([':username' => $loggedInID, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText, 'img' => $imagesString]);
 
     }
 }
@@ -118,4 +141,6 @@ if (isset($_POST['post-blog'])) {
 if (isset($_SESSION['userdata']) && isset($_POST['logout'])) {
     session_destroy();
 }
+
+
 ?>
