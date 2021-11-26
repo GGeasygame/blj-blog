@@ -19,10 +19,10 @@
                     <fieldset class="loginFieldset">
                     <legend>Login</legend>
                     <label for="usernameEmail">Enter Username or Email</label>
-                    <input type="text" name="usernameEmail" class="usernameEmail" placeholder="username/email">
+                    <input type="text" name="usernameEmail" class="usernameEmail" placeholder="username/email"><br>
                     <label for="password">Enter Password</label>
-                    <input type="password" name="password" class="password">
-                    <input type="submit" value="Login" name="login" class="login">
+                    <input type="password" name="password" class="password"><br>
+                    <input type="submit" value="Login" name="login" class="login"><br>
 
                     <a href="index.php?page=register">No Account Yet? Register Here</a>
                     </fieldset>
@@ -72,8 +72,8 @@
             <?php } else {?>
             <form action="" method="post" class="post-form">
                 <label for="title">Title: </label>
-                <input type="text" class="post-title" name="post-title"></input>
-                <textarea name="post-text" class="post-text" cols="100" rows="13" placeholder="Enter your text here"></textarea>
+                <input type="text" class="post-title" name="post-title"></input><br>
+                <textarea name="post-text" class="post-text" cols="100" rows="13" placeholder="Enter your text here"></textarea><br>
                 <label for="img">Insert Image-URL: </label>
                 <input type="text" class="img" name="img"></input><br>
                 <input type="submit" id="post-blog" value="submit" name="post-blog">
@@ -94,11 +94,11 @@
                     ?>
                     <div class="flex-post">
                         <h2 class="post_title"><?=htmlspecialchars($blog['post_title'])?></h1>
-                        <h2 class="created_by"><?php 
+                        <h4 class="created_by"><?php 
                         echo htmlspecialchars($username);
-                        ?></h2>
-                        <h2 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h3>
-                        <p class="post_text"><?=htmlspecialchars($blog['post_text'])?></p>
+                        ?></h4>
+                        <h4 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h4>
+                        <p class="blog-text"><?=htmlspecialchars($blog['post_text'])?></p>
 
                         <div class="img-flex">
                             <?php if ($blog['img_url'] != null) { 
@@ -137,20 +137,25 @@
                             <p>Likes: <?=$blog['like_post'] === null ? 0 : $blog['like_post']?> Dislikes: <?=$blog['dislike_post'] === null ? 0 : $blog['dislike_post']?></p>
                         </div>
                         <div class="comments">
-                            <?php foreach ($comments as $comment) { 
+                            <?php $i = 1;
+                            foreach ($comments as $comment) { 
                                 $stmt = $pdo->prepare("SELECT `username` FROM `users` WHERE id = :id");
                                 $stmt->execute(['id' => $comment['created_by']]);
                                 $username = $stmt->fetchAll();
                                 $username = $username[0]['username'];
+
                                 ?>
                                 
                                 <?php if ($comment['post_id'] == $blog['id']) { ?>
-                                <div class="comment">
-                                    <p class="created_by"><?=htmlspecialchars($username)?></p>
-                                    <p class="created_at"><?=htmlspecialchars($comment['created_at'])?></p>
+                                <div class="comment <?=$i % 2 ? 'lightgrey' : 'grey'?>">
+                                    <div class="at_by">
+                                        <p class="created_by"><?=htmlspecialchars($username)?></p>
+                                        <p class="created_at"><?=htmlspecialchars($comment['created_at'])?></p>
+                                    </div>
                                     <p class="comment_text"><?=htmlspecialchars($comment['comment_text'])?></p>
                                 </div>
-                                <?php } ?>
+                                <?php $i++;
+                            } ?>
                             <?php } ?>
                         </div>
                     </div>
@@ -159,7 +164,7 @@
         </section>
 
         <section class="other-blogs">
-            
+            <h3><a href="index.php?page=otherBlogs">Click to see other blogs</a></h3>
         </section>
 
     </div>

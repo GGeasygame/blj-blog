@@ -12,6 +12,9 @@ if (isset($_GET['page'])) {
     if ($page === 'register') {
         include './view/register/register.view.php';
     }
+    if ($page === 'otherBlogs') {
+        include './view/otherBlogs/otherBlogs.view.php';
+    }
 } else {
     include './view/home/home.view.php';
 }

@@ -62,6 +62,9 @@ if (isset($_POST['post-comment'])) {
     } else {
         $errors[] = 'Please enter a comment';
     }
+    if (strlen($_POST['post-comment-text']) > 200) {
+        $errors[] = 'Your comment is too long';
+    } 
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `comments` (comment_text, created_by, created_at, post_id) VALUES (:commentText, :commentUsername, :postTime, :postID)");
         $stmt->execute(['commentText' => $commentText, 'commentUsername' => $loggedInID, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
@@ -71,24 +74,11 @@ if (isset($_POST['post-comment'])) {
         $stmt->execute(['id' => $pdo->lastInsertId()]);
         $post_id = $stmt->fetchAll()[0]['post_id'];
 
-        $stmt = $pdo->prepare("SELECT `created_by` FROM `posts` WHERE (id = :id)");
-        $stmt->execute(['id' => $post_id]);
-        $postCreator = $stmt->fetchAll()[0]['created_by'];
-
-        $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (id = :id)");
-        $stmt->execute(['id' => $postCreator]);
-        $postCreatorData = $stmt->fetchAll()[0];
-
-
-        $to = $postCreatorData['email'];
-        $subject = "Jonas Blog";
-        $message = strtr("Hallo @creator \r\n \r\n
-        Ihr Blog wurde von @commenter kommentiert!
-        ", ["@creator" => $postCreatorData['username'], "@commenter" => $userValidation['username']]);
-        if (mail($to, $subject, $message)) {
-            echo 'email sent comment';
-        }
+        $message = ("Hello, \r\nSomeone commented on your blog.\r\n\r\nComment: $commentText");
+        sendMailByBlogID($pdo, $post_id, $userValidation, $message);
+        header('Location: ' . $_SERVER['PHP_SELF']);
     }
+    
 }
 
 if (isset($_POST['rep'])) {
@@ -108,30 +98,33 @@ if (isset($_POST['rep'])) {
         $stmt = $pdo->prepare("UPDATE `posts` SET dislike_post = :postDislike WHERE id = :repID");
         $stmt->execute([':postDislike' => $postDislike, ':repID' => $repID]);
     }
+    
     if ($rep === 'like' || $rep === 'dislike') {
-        $stmt = $pdo->prepare("SELECT `created_by` FROM `posts` WHERE (id = :id)");
-        $stmt->execute(['id' => $repID]);
-        $postCreator = $stmt->fetchAll()[0]['created_by'];
+        if($rep === 'like'){ $message = ("Hello, someone liked your blog.");}
+        if($rep === 'dislike'){ $message = ("Hello, someone disliked your blog.");}
+        sendMailByBlogID($pdo, $repID, $userValidation, $message);
 
-
-        $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (id = :id)");
-        $stmt->execute(['id' => $postCreator]);
-        $postCreatorData = $stmt->fetchAll()[0];
-
-
-        $to = $postCreatorData['email'];
-        $subject = "Jonas Blog";
-        $message = strtr("Hallo @creator \r\n \r\n
-        Ihr Blog wurde von @userRep bewertet!
-        ", ["@creator" => $postCreatorData['username'], "@userRep" => $userValidation['username']]);
-        if (mail($to, $subject, $message)) {
-            echo 'email sent comment';
-        }
+        header('Location: ' . $_SERVER['PHP_SELF']);
     }
 }
 
-function sendMail() {
-    
+function sendMailByBlogID($pdo, $blogID, $userValidation, $message) {
+    $stmt = $pdo->prepare("SELECT `created_by` FROM `posts` WHERE (id = :id)");
+    $stmt->execute(['id' => $blogID]);
+    $postCreator = $stmt->fetchAll()[0]['created_by'];
+
+
+    $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (id = :id)");
+    $stmt->execute(['id' => $postCreator]);
+    $postCreatorData = $stmt->fetchAll()[0];
+
+
+    $to = $postCreatorData['email'];
+    $subject = "Jonas Blog";
+
+    if (mail($to, $subject, $message)) {
+        echo 'email sent comment';
+    }
 }
 
 
@@ -141,15 +134,24 @@ if (isset($_POST['post-blog'])) {
     } else {
         $errors[] = 'Please enter a text';
     }
+    if(strlen($_POST['post-text']) > 230) {
+        $errors[] = 'Youre post is too long';
+    }
     if (!empty($_POST['post-title'])) {
         $postTitle = $_POST['post-title'];
     } else {
         $errors[] = 'Please enter a title';
     }
+    if(strlen($_POST['post-title']) > 20) {
+        $errors[] = 'Your title is too long';
+    }
 
     if (!empty($_POST['img']) && @!is_array(getimagesize($_POST['img']))) {
         $errors[] = 'Please enter valid Image-URL';
-    } 
+    }
+    if (!empty($_POST['img']) && strlen($_POST['img'] > 200)) {
+        $errors[] = 'The image-URL is too long';
+    }
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `posts` (created_by, created_at, post_title, post_text, img_url) VALUES (:username, :postTime, :postTitle, :postText, :img)");
         
@@ -157,12 +159,15 @@ if (isset($_POST['post-blog'])) {
         
         unset($_SESSION['img']);
         $stmt->execute([':username' => $loggedInID, 'postTime' => $postDateTime, 'postTitle' => $postTitle, 'postText' => $postText, 'img' => $imagesString]);
+        
+        header('Location: ' . $_SERVER['PHP_SELF']);
 
     }
 }
 
 if (isset($_SESSION['userdata']) && isset($_POST['logout'])) {
     session_destroy();
+    header('Location: ' . $_SERVER['PHP_SELF']);
 }
 
 
