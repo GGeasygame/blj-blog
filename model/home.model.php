@@ -81,15 +81,12 @@ if (isset($_POST['post-comment'])) {
 
 
         $to = $postCreatorData['email'];
-        echo $to;
         $subject = "Jonas Blog";
-        echo $subject;
         $message = strtr("Hallo @creator \r\n \r\n
         Ihr Blog wurde von @commenter kommentiert!
         ", ["@creator" => $postCreatorData['username'], "@commenter" => $userValidation['username']]);
-        echo $message;
-        if(mail($to, $subject, $message)) {
-            echo 'ERFOLGREICH GESENDET!';
+        if (mail($to, $subject, $message)) {
+            echo 'email sent comment';
         }
     }
 }
@@ -104,13 +101,39 @@ if (isset($_POST['rep'])) {
         
         $postLike = $_POST['repPostLike'] + 1;
 
-        $pdo->exec("UPDATE `posts` SET like_post = $postLike WHERE id = $repID");
+        $stmt = $pdo->prepare("UPDATE `posts` SET like_post = $postLike WHERE id = :repID");
+        $stmt->execute(['repID' => $repID]);
     } elseif ($rep === 'dislike') {
         $postDislike = $_POST['repPostDislike'] + 1;
-        $pdo->exec("UPDATE `posts` SET dislike_post = $postDislike WHERE id = $repID");
+        $stmt = $pdo->prepare("UPDATE `posts` SET dislike_post = :postDislike WHERE id = :repID");
+        $stmt->execute([':postDislike' => $postDislike, ':repID' => $repID]);
     }
+    if ($rep === 'like' || $rep === 'dislike') {
+        $stmt = $pdo->prepare("SELECT `created_by` FROM `posts` WHERE (id = :id)");
+        $stmt->execute(['id' => $repID]);
+        $postCreator = $stmt->fetchAll()[0]['created_by'];
+
+
+        $stmt = $pdo->prepare("SELECT * FROM `users` WHERE (id = :id)");
+        $stmt->execute(['id' => $postCreator]);
+        $postCreatorData = $stmt->fetchAll()[0];
+
+
+        $to = $postCreatorData['email'];
+        $subject = "Jonas Blog";
+        $message = strtr("Hallo @creator \r\n \r\n
+        Ihr Blog wurde von @userRep bewertet!
+        ", ["@creator" => $postCreatorData['username'], "@userRep" => $userValidation['username']]);
+        if (mail($to, $subject, $message)) {
+            echo 'email sent comment';
+        }
+    }
+}
+
+function sendMail() {
     
 }
+
 
 if (isset($_POST['post-blog'])) {
     if (!empty($_POST['post-text'])) {
