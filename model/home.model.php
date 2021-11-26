@@ -65,6 +65,8 @@ if (isset($_POST['post-comment'])) {
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `comments` (comment_text, created_by, created_at, post_id) VALUES (:commentText, :commentUsername, :postTime, :postID)");
         $stmt->execute(['commentText' => $commentText, 'commentUsername' => $loggedInUsername, 'postTime' => $postDateTime, 'postID' => $_POST['commentID']]);
+
+        $stmt = $pdo->prepare("SELECT `created_by` FROM `users`WHERE (id = :id)");
     }
 }
 

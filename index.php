@@ -9,6 +9,9 @@ if (isset($_GET['page'])) {
     if ($page === 'changePassword') {
         include './view/changePassword/changePassword.view.php';
     }
+    if ($page === 'register') {
+        include './view/register/register.view.php';
+    }
 } else {
     include './view/home/home.view.php';
 }

@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog</title>
-    <link rel="stylesheet" href="stylesheet.css">
+    <link rel="stylesheet" href="./view/home/stylesheet.css">
 </head>
 <body>
     <div class="grid">
@@ -24,7 +24,7 @@
                     <input type="password" name="password" class="password">
                     <input type="submit" value="Login" name="login" class="login">
 
-                    <a href="./register.php">No Account Yet? Register Here</a>
+                    <a href="index.php?page=register">No Account Yet? Register Here</a>
                     </fieldset>
                 </form>
             <?php } else { ?>
@@ -99,17 +99,22 @@
                                ?>
                                     <img src="<?=htmlspecialchars($images)?>" alt="image">
                                     
-                                    <?php // }
+                                    <?php
                                 } ?>
                         </div>
 
                         <div class="post-comment">
+                            <?php if ($loggedInUsername !== '') { ?>
                             <form action="" method="post" class="post-comment-form" class="comment-form">
                                 <textarea name="post-comment-text" id="post-comment-text" cols="30" rows="1" placeholder="Enter your text here"></textarea>
                                 <input type="submit" id="post-comment" value="submit" name="post-comment">
 
                                 <input type="hidden" name="commentID" value=<?=$blog['id']?> />
                             </form>
+                            <?php } else { ?>
+                                <p>Log in to comment</p>
+
+                            <?php } ?>
 
                             <form action="" method="post" class="rep-form">         
                                 <input type="radio" id="like" name="rep" value="like">
