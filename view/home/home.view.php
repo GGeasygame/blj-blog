@@ -15,18 +15,25 @@
             <h1>Jonas' Blog</h1>
 
             <?php if ($loggedInID === '') { ?>
-                <form action="" method="post" class="loginForm">
-                    <fieldset class="loginFieldset">
+                <fieldset class="loginFieldset">
                     <legend>Login</legend>
-                    <label for="usernameEmail">Enter Username or Email</label>
-                    <input type="text" name="usernameEmail" class="usernameEmail" placeholder="username/email"><br>
-                    <label for="password">Enter Password</label>
-                    <input type="password" name="password" class="password"><br>
-                    <input type="submit" value="Login" name="login" class="login"><br>
-
-                    <a href="index.php?page=register">No Account Yet? Register Here</a>
-                    </fieldset>
-                </form>
+                    <form action="" method="post" class="loginForm">
+                        
+                        
+                        <div class="flex-align">
+                            <label for="usernameEmail">Username/Email</label>
+                            <input type="text" name="usernameEmail" class="usernameEmail" placeholder="username/email">
+                        </div>
+                        <div class="flex-align">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" class="password">
+                        </div>
+                        <input type="submit" value="Login" name="login" class="login">
+                        <br>
+                        <a href="index.php?page=register">No Account Yet? Register Here</a>
+                    
+                    </form>
+                </fieldset>
             <?php } else { ?>
                 <fieldset class="loggedInUser">
                     <legend>User</legend>
@@ -93,23 +100,27 @@
                         $username =$username[0]['username'];
                     ?>
                     <div class="flex-post">
-                        <h2 class="post_title"><?=htmlspecialchars($blog['post_title'])?></h1>
-                        <h4 class="created_by"><?php 
-                        echo htmlspecialchars($username);
-                        ?></h4>
-                        <h4 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h4>
-                        <p class="blog-text"><?=htmlspecialchars($blog['post_text'])?></p>
-
-                        <div class="img-flex">
-                            <?php if ($blog['img_url'] != null) { 
-                                $images = $blog['img_url'];
-                               ?>
-                                    <img src="<?=htmlspecialchars($images)?>" alt="image">
-                                    
-                                    <?php
-                                } ?>
+                        <div class="post">
+                            <div class="head">
+                                <h2 class="post_title"><?=htmlspecialchars($blog['post_title'])?></h1>
+                                <h4 class="created_by"><?php 
+                                echo htmlspecialchars($username);
+                                ?></h4>
+                                <h4 class="created_at"><?=htmlspecialchars($blog['created_at'])?></h4>
+                            </div>
+                            <div class="text">
+                                <p class="blog-text"><?=htmlspecialchars($blog['post_text'])?></p>
+                            </div>
+                            <div class="img-flex">
+                                <?php if ($blog['img_url'] != null) { 
+                                    $images = $blog['img_url'];
+                                ?>
+                                        <img src="<?=htmlspecialchars($images)?>" alt="image">
+                                        
+                                        <?php
+                                    } ?>
+                            </div>
                         </div>
-
                         <div class="post-comment">
                             <?php if ($loggedInID !== '') { ?>
                             <form action="" method="post" class="post-comment-form" class="comment-form">
@@ -149,8 +160,7 @@
                                 <?php if ($comment['post_id'] == $blog['id']) { ?>
                                 <div class="comment <?=$i % 2 ? 'lightgrey' : 'grey'?>">
                                     <div class="at_by">
-                                        <p class="created_by"><?=htmlspecialchars($username)?></p>
-                                        <p class="created_at"><?=htmlspecialchars($comment['created_at'])?></p>
+                                        <p><?=htmlspecialchars($username)?> &nbsp;&nbsp;&nbsp; <?=htmlspecialchars($comment['created_at'])?></p>
                                     </div>
                                     <p class="comment_text"><?=htmlspecialchars($comment['comment_text'])?></p>
                                 </div>

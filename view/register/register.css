@@ -1,3 +1,6 @@
+body {
+    background-color: aqua;
+}
 form, fieldset {
     max-width: max-content;
     margin: auto;
@@ -16,4 +19,9 @@ label, input {
 
 ul {
     background-color: red;
+}
+
+.flex-align {
+    display: flex;
+    justify-content: space-between;
 }

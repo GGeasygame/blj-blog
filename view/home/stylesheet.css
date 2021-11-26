@@ -35,8 +35,16 @@ body {
 }
 
 .loginForm {
-    margin: auto;
-    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+.loginFieldset {
+    text-align: center;
+}
+.loginForm {
+    margin: 0px;
+    display: inline;
 }
 .loggedin-text {
     color: green;
@@ -68,16 +76,34 @@ body {
 .flex-post {
     display: grid;
     grid-template:
-    "post_title     created_by      created_at"
-    "post_text      post_text       post_text"
-    "img            img             img"
-    "post-comment   post-comment    post-comment"
-    "comment        comment         comment"
+    "post"
+    "post-comment"
+    "comment"
     ;
-    grid-template-rows: 60px auto auto auto;
-    grid-template-columns: auto 200px 200px;
+    grid-template-rows: auto;
+    grid-template-columns: auto;
     text-align: center;
 }
+.post {
+    grid-area: post;
+    display: grid;
+    grid-template:
+    "head"
+    "text"
+    "img"
+}
+.head {
+    grid-area: head;
+    display: flex;
+    justify-content: space-around;
+    background: linear-gradient(#e97c7c, #c75a5a);
+    border-radius: 15px;
+}
+.text {
+    grid-area: text;
+    margin: 15px;
+}
+
 
 h2 {
     margin: 10px 10px;
@@ -98,9 +124,8 @@ h2 {
     text-align: left;
     margin-top: 10px;
     border: 1px solid black;
-    display: inline;
-    margin: auto;
-    width: 50%;
+    display: inline-block;
+    width: 70%;
 }
 .post-comment {
     grid-area: post-comment;
@@ -125,22 +150,18 @@ h2 {
 .comment {
     display: grid;
     grid-template:
-    "created_by     created_at"
+    "created_at_by  created_at_by"
     "comment_text   comment_text"
     ;
     grid-template-rows: auto auto;
     grid-template-columns: auto auto;
 }
-.comment > .created_by {
-    grid-area: created_by;
+.at_by {
+    grid-area: created_at_by;
     text-align: right;
-    margin-right: 20px;
+    margin-right: 5em;
 }
-.comment > .created_at {
-    grid-area: created_at;
-    text-align: left;
-    margin-left: 20px;
-}
+
 .comment > .comment_text {
     grid-area: comment_text;
 }
@@ -176,5 +197,5 @@ h2 {
     text-align: center;
 }
 h1, h2, h3, h4, p {
-    color: #994444;
+    color: #772222;
 }
