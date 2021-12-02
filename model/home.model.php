@@ -1,9 +1,6 @@
 <?php
-$user = 'root';
-$password = '';
-$database = 'posts';
 
-$pdo = new PDO('mysql:host=localhost;dbname=' . $database, $user, $password, [
+$pdo = new PDO('mysql:host=mysql2.webland.ch;dbname=d041e_jokaufmann', 'd041e_jokaufmann', '54321_Db!!!', [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
