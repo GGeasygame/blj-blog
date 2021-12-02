@@ -1,5 +1,5 @@
 body {
-    background-color: aqua;
+    background-color: lightblue;
 }
 form, fieldset {
     max-width: max-content;
@@ -8,6 +8,7 @@ form, fieldset {
 }
 fieldset {
     text-align: center;
+    background-color: aliceblue;
 }
 form {
     margin: 0px;
@@ -24,4 +25,10 @@ ul {
 .flex-align {
     display: flex;
     justify-content: space-between;
+}
+h2 {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    margin-bottom: 10px;
 }

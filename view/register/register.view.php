@@ -20,25 +20,25 @@
             </ul>
         </div>
     <?php } ?>
-
+    
+    <h2>Register</h2>
     <fieldset class="register-fieldset">
-        <legend>Register</legend>
         <form action="" method="post">
             <div class="flex-align">
                 <label for="first-name">First Name </label>
-                <input type="name" name="first-name" class="first-name" placeholder="First Name">
+                <input type="name" name="first-name" class="first-name" placeholder="First Name" value="<?php echo ( isset( $_POST['first-name'] ) ? htmlspecialchars($_POST['first-name']) : '' ); ?>">
             </div>
             <div class="flex-align">
                 <label for="last-name">Last Name </label>
-                <input type="name" name="last-name" class="last-name" placeholder="Last Name">
+                <input type="name" name="last-name" class="last-name" placeholder="Last Name" value="<?php echo ( isset( $_POST['last-name'] ) ? htmlspecialchars($_POST['last-name']) : '' ); ?>">
             </div>
             <div class="flex-align">
                 <label for="email">Email </label>
-                <input type="email" name="email" class="email" placeholder="Email">
+                <input type="email" name="email" class="email" placeholder="Email" value="<?php echo ( isset( $_POST['email'] ) ? htmlspecialchars($_POST['email']) : '' ); ?>">
             </div>
             <div class="flex-align">
                 <label for="username">Username </label>
-                <input type="text" name="username" class="username" placeholder="Username">
+                <input type="text" name="username" class="username" placeholder="Username" value="<?php echo ( isset( $_POST['username'] ) ? htmlspecialchars($_POST['username']) : '' ); ?>">
             </div>
             <div class="flex-align">
                 <label for="password">Password </label>

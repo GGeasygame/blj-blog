@@ -28,6 +28,7 @@ if (isset($_POST['submit'])) {
     if (empty($errors)) {
         $stmt = $pdo->prepare("INSERT INTO `users` (first_name, last_name, email, username, user_password) VALUES (:firstName, :lastName, :email, :username, SHA1(:password))");
         $stmt->execute([':firstName' => $_POST['first-name'], ':lastName' => $_POST['last-name'], ':email' => $_POST['email'], ':username' => $_POST['username'], ':password' => $_POST['password']]);
+        header('Location: index.php?page=home');
     }
 }
 
