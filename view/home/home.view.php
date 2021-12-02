@@ -55,7 +55,7 @@
 
                 <?php foreach ($urls as $url) { ?>
 
-                    <li><a href=<?=$url['url']?>><?=$url['description']?></a></li>
+                    <li class="blog-link"><a href=<?=$url['url']?>><?=$url['description']?></a></li>
 
                 <?php } ?>
 
@@ -130,7 +130,7 @@
                                 <input type="hidden" name="commentID" value=<?=$blog['id']?> />
                             </form>
                             <?php } else { ?>
-                                <p>Log in to comment</p>
+                                <p><a href="./">Log in to Comment</a></p>
 
                             <?php } ?>
 
@@ -172,11 +172,6 @@
                 <?php } ?>    
             </div>
         </section>
-
-        <section class="other-blogs">
-            <h3><a href="index.php?page=otherBlogs">Click to see other blogs</a></h3>
-        </section>
-
     </div>
 </body>
 </html>

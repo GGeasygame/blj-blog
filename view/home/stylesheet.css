@@ -1,8 +1,6 @@
 body {
     padding: 0px;
     margin: 0px;
-    background: linear-gradient(#e66465, #9198e5);
-    
 }
 .grid {
     display: grid;
@@ -10,7 +8,6 @@ body {
     "header         header"
     "navigation     body-blogger"
     "body-user      body-user"
-    "other-blogs    other-blogs"
     ;
     grid-template-rows: auto;
     grid-template-columns: 200px auto;
@@ -24,8 +21,6 @@ body {
     text-align: center;
     background-color: lightblue;
 }
-
-
 
 .loginFieldset, .loggedInUser{
     max-width: max-content;
@@ -56,7 +51,22 @@ body {
 }
 .navigation > ul {
     max-width: 200px
+    
 }
+.blog-link {
+    list-style-type: none;
+}
+
+.blog-link > a:hover {
+    color: green;
+    padding-left: 10px;
+}
+.blog-link > a:active {
+    color: purple;   
+}
+
+
+
 .body-blogger {
     grid-area: body-blogger;
     margin: 10px;
@@ -71,7 +81,7 @@ body {
     flex-wrap: wrap;
     flex-grow: 1;
     justify-content: center;
-    margin: 10px;
+    margin:  10px 20px;
 }
 .flex-post {
     display: grid;
@@ -94,11 +104,16 @@ body {
 }
 .head {
     grid-area: head;
-    display: flex;
-    justify-content: space-around;
-    background: linear-gradient(#e97c7c, #c75a5a);
+    display: grid;
+    grid-template:
+    "post_title      created_by      created_at";
     border-radius: 15px;
+    grid-template-columns: 50em;
+    grid-template-rows: 1fr;
 }
+
+
+
 .text {
     grid-area: text;
     margin: 15px;
@@ -123,9 +138,12 @@ h2 {
     padding: 10px 10px;
     text-align: left;
     margin-top: 10px;
-    border: 1px solid black;
+    border-left: 1px solid black;
     display: inline-block;
     width: 70%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: large;
+    color: black;
 }
 .post-comment {
     grid-area: post-comment;
@@ -137,6 +155,19 @@ h2 {
 }
 .post-form {
     padding: 20px;
+    border-radius: 15px;
+    background-color: lightblue;
+    display: inline-block;
+}
+.post-form > input, .post-form > textarea {
+    border-radius: 10px;
+    margin: 5px;
+}
+.post-title {
+    width: 30em;
+}
+.img {
+    width: 15em;
 }
 .error-box {
     background-color: red;
@@ -164,12 +195,13 @@ h2 {
 
 .comment > .comment_text {
     grid-area: comment_text;
+    color: black;
 }
 .lightgrey {
-    background-color: #dddddd;
+    background-color: #eeeeee;
 }
 .grey {
-    background-color: #cccccc;
+    background-color: #dddddd;
 }
 .img-flex > img {
     max-width: 200px;
