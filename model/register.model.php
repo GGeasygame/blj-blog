@@ -7,8 +7,6 @@ $pdo = new PDO('mysql:host=mysql2.webland.ch;dbname=d041e_jokaufmann', 'd041e_jo
 ]);
 
 
-
-
 $errors = array();
 
 if (isset($_POST['submit'])) {
