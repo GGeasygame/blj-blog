@@ -16,20 +16,18 @@
     <?php } else if ($logged === 1) { ?>
         <h1 class="error">WRONG PASSWORD</h1>
     <?php } ?>
-    <fieldset>
-        <legend>Change Password</legend>
         <form action="" method="post">
-            <label for="old-password">Enter Old Password </label>
-            <input type="password" name="old-password" class="old-password">
-            <label for="new-password">Enter New Password</label>
-            <input type="password" name="new-password" class="new-password">
+            <div class="flex-align">
+                <label for="old-password">Enter Old Password </label>
+                <input type="password" name="old-password" class="old-password"><br>
+            </div>
+            <div class="flex-align">
+                <label for="new-password">Enter New Password</label>
+                <input type="password" name="new-password" class="new-password"><br>
+            </div>
             <input type="submit" value="submit" name="new-password-submit" class="new-password-submit">
 
             <input type="hidden" name="userID" value=<?=$id?>>
         </form>
-
-
-
-    </fieldset>
 </body>
 </html>
