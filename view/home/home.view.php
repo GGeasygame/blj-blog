@@ -139,7 +139,7 @@
                                 <label for="like">Like </label>
                                 <input type="radio" id="dislike" name="rep" value="dislike">
                                 <label for="dislike">Dislike </label>
-                                <input type="submit" value="submit" name="submit-rep" id="submit-rep">
+                                <input type="submit" value="submit" name="submit-rep" class="submit-rep">
                             
                                 <input type="hidden" name="repID" value=<?=$blog['id']?>>
                                 <input type="hidden" name="repPostLike" value=<?=$blog['like_post']?>>

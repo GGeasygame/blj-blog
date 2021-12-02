@@ -152,6 +152,18 @@ h2 {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
+    border-top-left-radius: 10px;
+}
+.post-comment-form {
+    display: flex;
+    justify-content: space-around;
+    height: 2em;
+}
+.post-comment-form > input, .post-comment-form > textarea {
+    border-radius: 5px;
+}
+.rep-form > .submit-rep {
+    border-radius: 5px;
 }
 .post-form {
     padding: 20px;
@@ -198,7 +210,7 @@ h2 {
     color: black;
 }
 .lightgrey {
-    background-color: #eeeeee;
+    background-color: #ededed;
 }
 .grey {
     background-color: #dddddd;
@@ -211,10 +223,6 @@ h2 {
 }
 .img-flex {
     grid-area: img;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    flex-wrap: wrap;
     padding: 10px;
 }
 
