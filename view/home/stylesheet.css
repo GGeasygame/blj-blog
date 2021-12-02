@@ -156,13 +156,20 @@ h2 {
     justify-content: space-around;
     border-top-left-radius: 10px;
 }
+.without-comment {
+    border-bottom-left-radius: 10px;
+}
 .post-comment-form {
     display: flex;
     justify-content: space-around;
     height: 2em;
+    padding-top: 5px;
 }
 .post-comment-form > input, .post-comment-form > textarea {
     border-radius: 5px;
+}
+.rep-form {
+    padding-top: 5px;
 }
 .rep-form > .submit-rep {
     border-radius: 5px;

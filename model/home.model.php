@@ -149,7 +149,7 @@ if (isset($_POST['post-blog'])) {
     if (!empty($_POST['img']) && @!is_array(getimagesize($_POST['img']))) {
         $errors[] = 'Please enter valid Image-URL';
     }
-    if (!empty($_POST['img']) && strlen($_POST['img'] > 200)) {
+    if (!empty($_POST['img']) && strlen($_POST['img']) > 200) {
         $errors[] = 'The image-URL is too long';
     }
     if (empty($errors)) {
@@ -170,5 +170,16 @@ if (isset($_SESSION['userdata']) && isset($_POST['logout'])) {
     header('Location: ' . $_SERVER['PHP_SELF']);
 }
 
+foreach ($blogs as $blog) {
+    $blog['created_at'] = date_create_from_format('d.m.Y H:i:s', $blog['created_at']);
+    $blog['created_at']->getTimestamp();
+}
+array_multisort(array_column($blogs, 'created_at'), SORT_DESC, $blogs);
+
+foreach ($comments as $comment) {
+    $blog['created_at'] = date_create_from_format('d.m.Y H:i:s', $comment['created_at']);
+    $blog['created_at']->getTimestamp();
+}
+array_multisort(array_column($comments, 'created_at'), SORT_DESC, $comments);
 
 ?>

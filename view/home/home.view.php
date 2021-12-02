@@ -121,7 +121,9 @@
                                     } ?>
                             </div>
                         </div>
-                        <div class="post-comment">
+                        <div class="post-comment <?php foreach($comments as $comment) {
+                            if ($comment['post_id'] !== $blog['id']) {
+                                echo 'without-comment'; break;}}?>">
                             <?php if ($loggedInID !== '') { ?>
                             <form action="" method="post" class="post-comment-form" class="comment-form">
                                 <textarea name="post-comment-text" id="post-comment-text" cols="30" rows="1" placeholder="Enter your text here"></textarea>
@@ -157,7 +159,7 @@
 
                                 ?>
                                 
-                                <?php if ($comment['post_id'] == $blog['id']) { ?>
+                                <?php if ($comment['post_id'] === $blog['id']) { ?>
                                 <div class="comment <?=$i % 2 ? 'lightgrey' : 'grey'?>">
                                     <div class="at_by">
                                         <p><?=htmlspecialchars($username)?> &nbsp;&nbsp;&nbsp; <?=htmlspecialchars($comment['created_at'])?></p>
