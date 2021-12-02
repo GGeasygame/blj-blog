@@ -155,9 +155,10 @@ h2 {
     flex-wrap: wrap;
     justify-content: space-around;
     border-top-left-radius: 10px;
-}
-.without-comment {
     border-bottom-left-radius: 10px;
+}
+.with-comment {
+    border-bottom-left-radius: 0px;
 }
 .post-comment-form {
     display: flex;

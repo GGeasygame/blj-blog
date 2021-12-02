@@ -122,8 +122,8 @@
                             </div>
                         </div>
                         <div class="post-comment <?php foreach($comments as $comment) {
-                            if ($comment['post_id'] !== $blog['id']) {
-                                echo 'without-comment'; break;}}?>">
+                            if ($comment['post_id'] === $blog['id']) {
+                                echo 'with-comment'; break;}}?>">
                             <?php if ($loggedInID !== '') { ?>
                             <form action="" method="post" class="post-comment-form" class="comment-form">
                                 <textarea name="post-comment-text" id="post-comment-text" cols="30" rows="1" placeholder="Enter your text here"></textarea>
