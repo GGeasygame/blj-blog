@@ -110,6 +110,8 @@ body {
     border-radius: 15px;
     grid-template-columns: 50em;
     grid-template-rows: 1fr;
+    background-color: #9cc7d5;
+    margin-top: 25px;
 }
 
 
@@ -215,13 +217,13 @@ h2 {
 .grey {
     background-color: #dddddd;
 }
-.img-flex > img {
+.img-div > img {
     max-width: 200px;
     max-height: 200px;
     border: 2px solid blue;
     border-radius: 5px;
 }
-.img-flex {
+.img-div {
     grid-area: img;
     padding: 10px;
 }

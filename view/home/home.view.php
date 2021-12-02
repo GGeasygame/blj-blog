@@ -111,7 +111,7 @@
                             <div class="text">
                                 <p class="blog-text"><?=htmlspecialchars($blog['post_text'])?></p>
                             </div>
-                            <div class="img-flex">
+                            <div class="img-div">
                                 <?php if ($blog['img_url'] != null) { 
                                     $images = $blog['img_url'];
                                 ?>
